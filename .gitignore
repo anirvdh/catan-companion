@@ -17,6 +17,11 @@ node_modules/
 # They are outputs, not sources, and would churn on every run.
 tools/timeline_cache.json
 
+# Generated screenshot harness: inlines sidepanel.js + the fonts (~270 KB), so it would churn on
+# every code change. Rebuild with `node tools/make_screenshots.js`. The PNGs in docs/img/ ARE
+# committed — they're what the README displays.
+docs/demo.html
+
 # ── Game data — NEVER COMMIT ──────────────────────────────────────────────────
 # Saved games and raw captures live OUTSIDE this repo, in:
 #   ~/Downloads/Catan saved games/

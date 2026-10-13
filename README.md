@@ -9,6 +9,13 @@ Most Catan helpers stop at "here are the pip counts." This one does two things t
 
 The second part is why this repo contains as much analysis as code. Several confident conclusions in its history turned out to be wrong, and the only reason that's known is that the raw games were kept.
 
+<p align="center">
+  <img src="docs/img/panel.png" alt="The Catan Companion side panel during a game" width="380">
+</p>
+
+> All screenshots are rendered from the **real components** — same markup, same CSS, same render
+> functions — driven by a realistic mid-game state. Regenerate them with `bash tools/capture_shots.sh`.
+
 ---
 
 ## Status
@@ -76,6 +83,12 @@ Three of those live fields arrive as **partial diffs** and have to be merged cum
 ### 1. Opening placement advisor
 
 Runs during setup, then hands off. It ranks every legal corner (and, for the second pick, every legal *pair*) through a five-step model.
+
+<p align="center">
+  <img src="docs/img/setup.png" alt="Opening placement advisor showing the board read and ranked picks" width="380">
+</p>
+
+The board read sits **above** the picks on purpose — you should know what kind of board it is before you look at a ranking. Each candidate shows its pip total, the road that follows it, what your next pick would be, what you'd fall back to if the opponent takes it, and which corners they're most likely to grab.
 
 #### Step 1 — read the board
 
@@ -169,15 +182,11 @@ Two terms were measured and removed rather than kept for appearance: **opportuni
 
 Takes over after setup. Earlier versions ran a fixed ladder — city > settlement > dev > road — which was **score-blind**: identical advice at 3 VP and at 14 VP. It now reads both players' live scores:
 
-```
-OBJECTIVE    Close out the game — 2 VP to go
-BOTTLENECK   2 ore short (you make 0.19/roll)
-DO NEXT      Build a CITY on your 9-wheat / 6-ore
-             +1 VP and doubles that hex.
-ALTERNATIVE  Buy a DEV card
-             Knights drive Largest Army — 1 more needed.
-CHANGES IF   they take Largest Army — a 4-VP swing
-```
+<p align="center">
+  <img src="docs/img/coach.png" alt="Win-Path coach showing objective, bottleneck, next action and alternative" width="380">
+</p>
+
+In that position the player holds two unplayed knights and is one short of Largest Army, so the coach surfaces it as the alternative and prices it: **+2 VP, and it costs nothing but the card.** The city is still the primary because it's the larger immediate gain — but the knight is the move most players forget they already own.
 
 Candidates are evaluated by the VP they *certainly* add now, so "does this win?" is a comparison rather than a special case. Tiers:
 
@@ -221,7 +230,21 @@ Colonist already displays the scoreboard. Repeating it is noise. Your VP, the op
 
 **Dice odds** — colonist does not roll fair dice. It draws from a 36-card deck with recent-roll damping and per-player 7-balancing. The model mirrors that: a deck of `{2:1, 3:2, … 7:6, … 12:1}`, reshuffled below 13 cards, with recently-seen numbers damped 34% each and 7-streaks damped 40%. That's why the panel shows live odds rather than static 6/36.
 
-**Opponent hand inference** — exact card *count* comes from the server; composition is tracked through gains, spends, trades and steals, and reconciled against the count. When it has to guess, it's flagged uncertain rather than presented as fact.
+<p align="center">
+  <img src="docs/img/dice-odds.png" alt="Next-roll odds from the balanced-dice model" width="380">
+  <br><em>Next-roll odds — note <code>6</code> at 0%: all five 6s have been drawn from the deck.</em>
+  <br><br>
+  <img src="docs/img/dice-dist.png" alt="Observed dice distribution" width="380">
+  <br><em>The same section switched to the observed distribution.</em>
+</p>
+
+A fair-dice model would show 6 at a flat 14%. The deck model knows it is temporarily impossible — and that the two players face different 7 odds (22% vs 39% above) because of the per-player balancing.
+
+**Opponent hand inference** — exact card *count* comes from the server; composition is tracked through gains, spends, trades and steals, and reconciled against the count. When it has to guess, it says so rather than presenting a guess as fact.
+
+<p align="center">
+  <img src="docs/img/opponent.png" alt="Opponent hand estimate with an uncertainty note" width="380">
+</p>
 
 **Also:** dev-deck tracking, robber placement advice weighted by opponent production and your own exposure, and a post-game review.
 
