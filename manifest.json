@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Catan Companion",
+  "version": "1.62",
+  "description": "Real-time Catan strategy assistant for colonist.io",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "sidePanel",
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "downloads"
+  ],
+  "host_permissions": [
+    "*://colonist.io/*",
+    "*://*.colonist.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://colonist.io/*", "*://*.colonist.io/*"],
+      "js": ["interceptor.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://colonist.io/*", "*://*.colonist.io/*"],
+      "js": ["content_bridge.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
+  "action": {
+    "default_title": "Open Catan Companion",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,30 @@
+# ── Local tooling / machine-specific ──────────────────────────────────────────
+.claude/settings.local.json     # local tool permissions; contains machine paths
+.DS_Store
+*.swp
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ── Node ──────────────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Derived research caches (regenerable from raw; see tools/) ────────────────
+# These are rebuilt by `python3 tools/timeline.py` and `node tools/setup_regression.js`.
+# They are outputs, not sources, and would churn on every run.
+tools/timeline_cache.json
+
+# ── Game data — NEVER COMMIT ──────────────────────────────────────────────────
+# Saved games and raw captures live OUTSIDE this repo, in:
+#   ~/Downloads/Catan saved games/
+# They are personal play data, they are large (60 MB+ and growing), and the raw
+# captures are irreplaceable (see "Never delete raw" in CATAN_1V1_PRIMER.md §13).
+# Keeping them out of git is deliberate — back them up separately.
+Catan saved games/
+*/raw/game-*.json
+game-*.json
+catan-capture-*.json
+logs/*.json

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catan Companion</title>
+<style>
+  /* Public Sans — bundled locally (no network dependency) */
+  @font-face { font-family: 'Public Sans'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/public-sans-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Public Sans'; font-weight: 600; font-style: normal; font-display: swap; src: url('fonts/public-sans-600.woff2') format('woff2'); }
+  @font-face { font-family: 'Public Sans'; font-weight: 700; font-style: normal; font-display: swap; src: url('fonts/public-sans-700.woff2') format('woff2'); }
+
+  :root {
+    /* Darker, higher-contrast surfaces */
+    --bg: #14120e;
+    --surface: #1f1c17;
+    --surface2: #2c2820;
+    --border: #423c31;
+    --accent: #f7ad33;
+    --accent2: #ec7529;
+    --text: #f7f2e8;
+    --text-muted: #c2b8a2;   /* was #7a7060 — now readable */
+    /* Resource colours, brightened for legible text on dark cards */
+    --wood: #d3a26e;
+    --brick: #ec8250;
+    --wheat: #f4c942;
+    --ore: #a1b6c8;
+    --sheep: #96cd5e;
+    --red: #f5746f;
+    --green: #61d78e;
+
+    --sans: 'Public Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.45;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  .header-turn { display: flex; align-items: baseline; gap: 5px; flex-shrink: 0; }
+  .header-turn-label {
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .header-turn-count {
+    font-family: var(--sans); font-size: 18px; font-weight: 700;
+    color: var(--accent); line-height: 1; min-width: 20px; text-align: center;
+  }
+  .header-status { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: flex-end; }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text-muted); display: inline-block; flex-shrink: 0; transition: background 0.3s;
+  }
+  .status-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.active    { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+  .status-label { color: var(--text-muted); font-size: 12px; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .tab {
+    flex: 1; padding: 9px 0; text-align: center; font-size: 11px;
+    font-family: var(--sans); font-weight: 600; color: var(--text-muted);
+    cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Scrollable Content ── */
+  .panels { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .panel { display: none; padding: 12px; }
+  .panel.active { display: block; }
+
+  /* ── Section ── */
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .section-header {
+    padding: 9px 12px; background: var(--surface2); border-bottom: 1px solid var(--border);
+    font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-body { padding: 12px; }
+
+  /* ── Content switcher (segmented control) ──
+     Used by the dice section to flip between next-roll odds and the observed distribution.
+     Sits inside a section-header, so it must opt out of the header's uppercase/letter-spacing. */
+  .dice-head { padding: 6px 8px 6px 6px; }
+  .switcher {
+    display: inline-flex; gap: 2px; padding: 3px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
+  }
+  .sw-opt {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    text-transform: none; letter-spacing: 0; line-height: 1;
+    padding: 6px 10px; border: 0; border-radius: 5px;
+    background: transparent; color: var(--text-muted); cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .sw-opt:hover { color: var(--text); }
+  .sw-opt.active { background: var(--surface2); color: var(--text); }
+  .dice-head-meta {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    text-transform: none; letter-spacing: 0; color: var(--text);
+  }
+
+  /* ── Dice Chart ── */
+  .dice-chart { display: flex; align-items: flex-end; gap: 3px; height: 90px; padding: 0 2px; }
+  .dice-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+  .dice-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; position: relative; }
+  .dice-bar { width: 100%; border-radius: 3px 3px 0 0; transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); min-height: 2px; }
+  .dice-bar.hot    { background: var(--accent2); }
+  .dice-bar.normal { background: var(--accent); opacity: 0.8; }
+  .dice-bar.cold   { background: var(--ore); opacity: 0.6; }
+  .dice-label { font-size: 11px; color: var(--text-muted); font-family: var(--sans); font-weight: 600; }
+  .dice-count { font-size: 10px; color: var(--text); font-weight: 700; }
+
+  /* ── Last Rolls ── */
+  .last-rolls { display: flex; gap: 5px; flex-wrap: wrap; }
+  .roll-chip {
+    width: 27px; height: 27px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-weight: 700; font-size: 13px;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text); transition: all 0.2s;
+  }
+  .roll-chip.hot   { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .roll-chip.seven { background: var(--red);     border-color: var(--red);     color: #fff; }
+  .roll-chip.new   { animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ── Resource Cards ── */
+  .resource-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .resource-card { border-radius: 6px; padding: 8px 4px; text-align: center; border: 1px solid transparent; position: relative; transition: transform 0.2s; }
+  .resource-card:hover { transform: translateY(-1px); }
+  .resource-card .res-icon  { font-size: 18px; display: block; margin-bottom: 3px; }
+  .resource-card .res-name  { font-size: 9px; color: rgba(255,255,255,0.72); font-family: var(--sans); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .resource-card .res-count { font-size: 18px; font-weight: 700; font-family: var(--sans); }
+  .res-wood  { background: rgba(211,162,110,0.22); border-color: rgba(211,162,110,0.5); } .res-wood  .res-count { color: var(--wood);  }
+  .res-brick { background: rgba(236,130,80,0.22);  border-color: rgba(236,130,80,0.5);  } .res-brick .res-count { color: var(--brick); }
+  .res-wheat { background: rgba(244,201,66,0.20);   border-color: rgba(244,201,66,0.5);  } .res-wheat .res-count { color: var(--wheat); }
+  .res-ore   { background: rgba(161,182,200,0.20);  border-color: rgba(161,182,200,0.5); } .res-ore   .res-count { color: var(--ore);   }
+  .res-sheep { background: rgba(150,205,94,0.20);   border-color: rgba(150,205,94,0.5);  } .res-sheep .res-count { color: var(--sheep); }
+
+  /* ── Hand probability bar ── */
+
+  /* ── Confidence badge ── */
+
+  /* ── Turn banner ── */
+  .turn-pill {
+    display: block; text-align: center;
+    font-family: var(--sans); font-weight: 800; font-size: 13px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 0; border-radius: 8px; margin-bottom: 12px;
+    background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); transition: all 0.2s;
+  }
+  .turn-pill.mine { background: rgba(97,215,142,0.16); color: var(--green); border-color: rgba(97,215,142,0.45); box-shadow: 0 0 12px rgba(97,215,142,0.15); }
+  .turn-pill.opp  { background: rgba(245,116,111,0.14);  color: var(--red);   border-color: rgba(245,116,111,0.4); }
+
+  /* ── Seven risk (per player) ── */
+  .seven-risk { display: flex; gap: 8px; margin-top: 10px; }
+  .seven-risk .sr {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600;
+  }
+  .seven-risk .sr b { font-size: 14px; font-weight: 800; }
+  .seven-risk .sr.you b { color: var(--green); }
+  .seven-risk .sr.opp b { color: var(--red); }
+
+  /* ── Opponent note ── */
+  .opp-note { font-size: 10px; color: var(--accent); line-height: 1.4; }
+  .opp-note:not(:empty) { margin-top: 7px; }
+
+  /* ── Save toggle ── */
+  .save-toggle { font-family: var(--sans); font-weight: 700; font-size: 11px; letter-spacing: 0.5px;
+    border: none; border-radius: 5px; padding: 3px 12px; cursor: pointer; color: #10130f; }
+  .save-toggle.on  { background: var(--accent); }
+  .save-toggle.off { background: #6b6f66; color: #e8e8e8; }
+
+  /* ── Board read banner ── */
+  .board-read { font-size: 11px; line-height: 1.35; border-radius: 6px; padding: 6px 9px; margin-bottom: 9px;
+    border: 1px solid var(--border); background: var(--surface2); }
+  .board-read b { font-family: var(--sans); }
+  .board-read .br-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .board-read.ba-ows  { border-color: rgba(247,173,51,0.55); background: rgba(247,173,51,0.10); }
+  .board-read.ba-road { border-color: rgba(90,170,120,0.55); background: rgba(90,170,120,0.10); }
+  .board-read.ba-bal  { border-color: var(--border); }
+
+  /* ── Setup advisor ── */
+  .advisor-head { font-family: var(--sans); font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 2px; }
+  .advisor-sub { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; }
+  .advisor-spot { flex: 1; font-size: 12px; font-weight: 600; color: var(--text); }
+  .advisor-pips { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+  .adv-rec { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; overflow: hidden; }
+  /* every card is expanded now, so highlight the TOP pick specifically rather than "whatever's open" */
+  .adv-rec.adv-top { border-color: rgba(247,173,51,0.5); }
+  .adv-rec summary { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; list-style: none; }
+  .adv-rec summary::-webkit-details-marker { display: none; }
+  .adv-rank { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .adv-body { padding: 2px 10px 10px 36px; }
+  .adv-line { font-size: 11px; color: var(--text-muted); line-height: 1.55; }
+  .adv-line b { color: var(--text); }
+  .adv-warn { color: var(--red); }
+  .adv-safe { color: var(--green); }
+  .adv-dim { color: var(--text-muted); opacity: 0.75; }
+  .adv-div { border-top: 1px solid var(--border); margin: 8px 0 6px; }
+
+  /* ── Turn coach ── */
+  .coach-hand { font-size: 12px; color: var(--text); margin-bottom: 5px; }
+  .coach-hand b { color: var(--accent); }
+  .coach-vp { font-size: 11px; color: var(--text-muted); margin-bottom: 9px; }
+  .coach-vp b { color: var(--text); }
+  .coach-act { padding: 8px 10px; margin-bottom: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; }
+  .coach-act.top { border-color: rgba(97,215,142,0.5); }
+  .coach-act b { display: block; color: var(--text); font-size: 12px; margin-bottom: 2px; }
+  .coach-act span { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
+
+  /* ── Win-Path panel (inside Turn Coach) ──
+     Four labelled rows, no scores. The opponent's position drives the advice but is never printed —
+     Colonist already shows both scores, so repeating them is noise. */
+  .wp { border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); padding: 2px 0; }
+  .wp-win    { border-color: rgba(97,215,142,0.65); background: rgba(97,215,142,0.08); }
+  .wp-defend { border-color: rgba(245,116,111,0.55); background: rgba(245,116,111,0.07); }
+  .wp-row { display: flex; gap: 9px; padding: 7px 10px; align-items: flex-start; }
+  .wp-row + .wp-row { border-top: 1px solid var(--border); }
+  .wp-label { flex: 0 0 74px; font-family: var(--sans); font-size: 9px; font-weight: 700;
+              letter-spacing: 0.08em; color: var(--text-muted); padding-top: 2px; }
+  .wp-text { flex: 1; font-size: 11.5px; color: var(--text); line-height: 1.45; }
+  .wp-text b { color: var(--text); font-weight: 700; }
+  .wp-sub { display: block; font-size: 10.5px; color: var(--text-muted); line-height: 1.4; margin-top: 2px; }
+  .wp-win .wp-label   { color: var(--green); }
+  .wp-defend .wp-label { color: var(--red); }
+
+  /* ── Robber advice (inside Turn Coach) ── */
+  .robber-box { background: rgba(245,116,111,0.10); border: 1px solid rgba(245,116,111,0.45); border-radius: 6px; padding: 9px 10px; margin-bottom: 10px; }
+  .robber-head { font-family: var(--sans); font-weight: 700; font-size: 12px; color: var(--red); margin-bottom: 6px; }
+  .robber-rec { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+  .robber-rank { flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; background: var(--red); color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .robber-rec.top .robber-spot b { color: var(--text); }
+  .robber-spot { font-size: 12px; color: var(--text-muted); }
+  .robber-spot b { color: var(--text); text-transform: capitalize; }
+
+  /* ── Development cards ── */
+  .dev-top { display: flex; gap: 8px; }
+  .dev-stat { flex: 1; text-align: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 4px; }
+  .dev-big { display: block; font-family: var(--sans); font-weight: 800; font-size: 22px; line-height: 1; color: var(--accent); }
+  .dev-lbl { display: block; margin-top: 3px; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+  /* ── Header-right count (opponent cards / dev deck) ── */
+  .hdr-count { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: none; letter-spacing: 0; }
+  .hdr-count b { color: var(--accent); font-weight: 800; font-size: 15px; }
+
+  /* ── Review (post-game coach) ── */
+  .rv-row { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+  .rv-row:last-child { border-bottom: none; }
+  .rv-row span:first-child { color: var(--text-muted); }
+  .rv-row span:last-child { text-align: right; }
+  .rv-row b { color: var(--text); }
+  .rv-dim { color: var(--text-muted); font-size: 10px; }
+  .rv-port { color: var(--accent); }
+  .rv-take { font-size: 11px; line-height: 1.5; padding: 6px 8px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--border); background: var(--surface2); color: var(--text); }
+  .rv-take.good { border-left-color: var(--green); }
+  .rv-take.bad  { border-left-color: var(--accent2); }
+  .rv-take.info { border-left-color: var(--ore); }
+  /* collapsible section */
+  .rv-collapse summary { list-style: none; }
+  .rv-collapse summary::-webkit-details-marker { display: none; }
+  .rv-collapse summary::after { content: '▸'; margin-left: auto; font-size: 10px; opacity: 0.7; }
+  .rv-collapse[open] summary::after { content: '▾'; }
+
+  /* ── Debug / event logs ── */
+  .debug-log { height: 240px; overflow-y: auto; font-size: 11px; line-height: 1.6; color: var(--text-muted); scrollbar-width: thin; font-family: var(--mono); }
+  .event-log { max-height: 200px; overflow-y: auto; font-size: 11px; line-height: 1.6; scrollbar-width: thin; }
+  .log-line       { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: var(--mono); }
+  .log-line.recv  { color: #7dbb92; }
+  .log-line.send  { color: #86a0c8; }
+  .log-line.game  { color: var(--accent); font-weight: 700; }
+  .log-line.error { color: var(--red); }
+
+  /* ── Buttons ── */
+  /* generic small button (used across panels: Analyze, Save, Clear, etc.) */
+  .btn-reset {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted);
+    padding: 6px 11px; border-radius: 5px; cursor: pointer;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; transition: all 0.2s; flex-shrink: 0;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+  .header-save { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+  .header-save-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 30px 20px; color: var(--text-muted); }
+  .empty-state .empty-icon { font-size: 34px; margin-bottom: 10px; opacity: 0.5; }
+  .empty-state p { font-size: 12px; line-height: 1.6; }
+
+  /* ── Footer ── */
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .roll-total { font-size: 11px; color: var(--text-muted); }
+  .roll-total span { color: var(--text); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ── Compact header: Save toggle | Status ── -->
+<header>
+  <div class="header-save">
+    <span class="header-save-label">💾 Save game</span>
+    <button id="saveToggle" class="save-toggle on">ON</button>
+  </div>
+  <div class="header-status">
+    <span class="status-dot" id="statusDot"></span>
+    <span class="status-label" id="statusLabel">Waiting...</span>
+  </div>
+</header>
+
+<!-- ── 3 tabs ── -->
+<div class="tabs">
+  <div class="tab active" data-tab="game">Game</div>
+  <div class="tab" data-tab="review">Review</div>
+  <div class="tab" data-tab="debug">Debug</div>
+</div>
+
+<div class="panels">
+
+  <!-- ── GAME TAB ── -->
+  <div class="panel active" id="panel-game">
+
+    <!-- Setup Advisor (opening picks) — visible through your last setup road, then hidden -->
+    <div class="section" id="setupAdvisor" style="display:none;border-color:var(--accent)">
+      <div class="section-header" style="color:var(--accent)">🧭 Setup Advisor</div>
+      <div class="section-body" id="setupAdvisorBody"></div>
+    </div>
+
+    <!-- Dice: one section, switched between next-roll odds and the observed distribution -->
+    <div class="section">
+      <div class="section-header dice-head">
+        <div class="switcher" id="diceSwitch">
+          <button class="sw-opt active" data-dice="odds">Roll odds</button>
+          <button class="sw-opt" data-dice="dist">Dice distribution</button>
+        </div>
+        <span id="totalRolls" class="dice-head-meta" style="display:none">0 rolls</span>
+      </div>
+      <div class="section-body">
+        <div id="dicePaneOdds">
+          <div class="dice-chart" id="oddsChart"></div>
+          <div class="seven-risk" id="sevenRisk"></div>
+        </div>
+        <div id="dicePaneDist" style="display:none">
+          <div class="dice-chart" id="diceChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opponent Hand Estimate -->
+    <div class="section">
+      <div class="section-header">
+        Opponent Hand
+        <span class="hdr-count"><b id="opponentTotal">0</b> cards</span>
+      </div>
+      <div class="section-body">
+        <div class="resource-grid" id="opponentResources"></div>
+        <div class="opp-note" id="opponentNote"></div>
+      </div>
+    </div>
+
+    <!-- Turn Coach — visible on your turn during the main game -->
+    <div class="section" id="turnCoach" style="display:none;border-color:var(--green)">
+      <div class="section-header" style="color:var(--green)">🎯 Turn Coach</div>
+      <div class="section-body" id="turnCoachBody"></div>
+    </div>
+
+    <!-- Development Cards -->
+    <div class="section">
+      <div class="section-header">Development Cards<span class="hdr-count" id="devDeckState"><b>25</b> in deck</span></div>
+      <div class="section-body">
+        <div id="devContent"></div>
+      </div>
+    </div>
+
+    <!-- Last Rolls (bottom) -->
+    <div class="section">
+      <div class="section-header">Last Rolls</div>
+      <div class="section-body">
+        <div class="last-rolls" id="lastRolls">
+          <span style="color:var(--text-muted);font-size:11px">No rolls yet</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── REVIEW TAB (post-game coach) ── -->
+  <div class="panel" id="panel-review">
+
+    <!-- Analyze last game + saved-game count on the far right -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px">
+      <button class="btn-reset" id="btnReview">🔍 Analyze last game</button>
+      <span class="hdr-count" id="savedCount"><b>0</b> games saved</span>
+    </div>
+
+    <!-- Saved Games — the corpus for the learning advisor (collapsed by default) -->
+    <details class="section rv-collapse" style="border-color:var(--accent)">
+      <summary class="section-header" style="color:var(--accent);cursor:pointer">🗄 Saved Games<span class="hdr-count" id="archiveStats"></span></summary>
+      <div class="section-body">
+        <div id="archiveList" style="margin-bottom:8px"></div>
+        <button class="btn-reset" id="btnRescan">🔄 Save games in memory</button>
+        <button class="btn-reset" id="btnClearArchive" style="margin-left:6px">🗑 Clear saved games</button>
+        <div class="rv-dim" id="clearArchiveNote" style="font-size:10px;margin-top:6px"></div>
+        <div class="rv-dim" style="font-size:10px;margin-top:8px;line-height:1.5">
+          Games auto-save to <b>Downloads/Catan saved games/v150/</b> when they finish — a small
+          record plus the full capture in <b>v150/raw/</b>. Drop files copied from another machine
+          into the same folder to pool them.
+          <div style="margin-top:6px;color:var(--red)"><b>Never delete v150/raw/.</b></div>
+          Records are <i>derived</i> and can always be rebuilt from raw. Raw cannot be rebuilt from
+          anything — delete it and the game is gone permanently, including for any future fix.
+        </div>
+      </div>
+    </details>
+    <div id="reviewContent">
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p><b>Post-game Review.</b><br>
+        Auto-runs when a game ends — or click <b>Analyze last game</b> to grade the most
+        recent game in the capture: opening, dice luck, production, hand/7s, ports, dev, and
+        takeaways to improve.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DEBUG TAB ── -->
+  <div class="panel" id="panel-debug">
+
+    <!-- Capture Logger -->
+    <div class="section">
+      <div class="section-header">
+        Capture Logger
+        <span id="captureCount" style="color:var(--text)">0 msgs</span>
+      </div>
+      <div class="section-body">
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:8px">
+          Auto-saves a full decoded dump to
+          <b style="color:var(--text)">Downloads/catan-logs/catan-capture-latest.json</b>
+          every 20s while this panel stays open. Keep it open for the whole game.
+        </div>
+        <div id="captureStatus" style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Waiting for messages…</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-reset" id="btnSaveNow">💾 Save Now</button>
+          <button class="btn-reset" id="btnSaveArchive">📦 Save Archive</button>
+          <button class="btn-reset" id="btnToggleCapture">⏸ Pause</button>
+          <button class="btn-reset" id="btnClearCapture">🗑 Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="section">
+      <div class="section-header">Event Log</div>
+      <div class="section-body">
+        <div class="event-log" id="eventLog">
+          <span style="color:var(--text-muted);font-size:11px">No events yet</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw Messages -->
+    <div class="section">
+      <div class="section-header">
+        Raw Messages
+        <button class="btn-reset" id="btnClearLog">Clear</button>
+      </div>
+      <div class="section-body">
+        <div class="debug-log" id="debugLog">
+          <div class="log-line" style="color:var(--text-muted)">Waiting for colonist.io messages...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="roll-total">Total rolls: <span id="footerRolls">0</span></div>
+  <div class="roll-total">7s &nbsp; You: <span id="footerSevensMe" style="color:var(--green)">0</span> &nbsp;·&nbsp; OPP: <span id="footerSevensOpp" style="color:var(--red)">0</span></div>
+</footer>
+
+<script src="sidepanel.js"></script>
+</body>
+</html>

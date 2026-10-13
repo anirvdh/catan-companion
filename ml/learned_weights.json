@@ -1,0 +1,83 @@
+{
+  "schema": "catan-learned-weights/v1",
+  "n_games": 111,
+  "target": "luck_adj_production",
+  "cv_r2": -0.4435060647464472,
+  "feature_importances": [
+    {
+      "feature": "heuristic_score",
+      "importance": 0.5385
+    },
+    {
+      "feature": "total_pips",
+      "importance": 0.1598
+    },
+    {
+      "feature": "covers_wheat",
+      "importance": 0.055
+    },
+    {
+      "feature": "covers_ore",
+      "importance": 0.0479
+    },
+    {
+      "feature": "n_res",
+      "importance": 0.0441
+    },
+    {
+      "feature": "has_2to1_port",
+      "importance": 0.0269
+    },
+    {
+      "feature": "covers_sheep",
+      "importance": 0.0267
+    },
+    {
+      "feature": "covers_wood",
+      "importance": 0.0252
+    },
+    {
+      "feature": "amFirst",
+      "importance": 0.0249
+    },
+    {
+      "feature": "n_6or8",
+      "importance": 0.0223
+    },
+    {
+      "feature": "covers_brick",
+      "importance": 0.0219
+    },
+    {
+      "feature": "has_3to1_port",
+      "importance": 0.0069
+    },
+    {
+      "feature": "has_6or8",
+      "importance": 0.0
+    }
+  ],
+  "linear_coefficients": {
+    "amFirst": -1.7124,
+    "total_pips": 3.1465,
+    "n_res": -0.287,
+    "has_6or8": -0.7422,
+    "n_6or8": 0.323,
+    "has_2to1_port": 4.5299,
+    "has_3to1_port": 4.1198,
+    "heuristic_score": 2.9113,
+    "covers_wood": 3.4426,
+    "covers_brick": -2.0288,
+    "covers_sheep": -0.4369,
+    "covers_wheat": 2.554,
+    "covers_ore": -4.8342
+  },
+  "suggested_resource_weights": {
+    "wood": 1.306,
+    "brick": 0.854,
+    "sheep": 0.985,
+    "wheat": 1.233,
+    "ore": 0.7
+  },
+  "note": "Provisional until ~50+ games. suggested_resource_weights map onto the `base` resource weights in buildBoardGeo (sidepanel.js)."
+}

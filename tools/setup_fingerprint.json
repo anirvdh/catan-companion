@@ -1,0 +1,362 @@
+[
+ {
+  "gid": "area1431",
+  "top": "6-sheep / 5-brick / 9-wheat",
+  "lean": -0.6038050697669316,
+  "nRecs": 3
+ },
+ {
+  "gid": "area9747",
+  "top": "6-wood / 9-wheat / 5-wheat",
+  "lean": 0.8782619196609903,
+  "nRecs": 3
+ },
+ {
+  "gid": "army1129",
+  "top": "6-wood / 9-wood / 5-wood",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "army6176",
+  "top": "6-wheat / 5-brick / 9-wheat",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "army9580",
+  "top": "8-wheat / 5-wheat / 10-ore",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "band2922",
+  "top": "5-ore / 9-wood / 10-wood",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "band7399",
+  "top": "5-brick / 9-wheat / 10-ore",
+  "lean": -0.35679390486227897,
+  "nRecs": 3
+ },
+ {
+  "gid": "band8152",
+  "top": "8-brick / 5-ore / 10-wheat",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "bank566",
+  "top": "6-ore / 9-wheat / 10-wood",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "bank5785",
+  "top": "6-wood / 9-ore / 5-wheat",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "blue5725",
+  "top": "6-wood / 9-wood / 5-brick",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "blue7731",
+  "top": "6-ore / 5-sheep / 11-brick",
+  "lean": 0.8782619196609903,
+  "nRecs": 3
+ },
+ {
+  "gid": "board1736",
+  "top": "8-sheep / 5-brick / 10-wheat",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "board468",
+  "top": "9-wood / 5-wheat / 10-sheep",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "board5634",
+  "top": "6-ore / 9-sheep / 3-wood",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "brick8584",
+  "top": "5-wheat / 9-ore / 10-sheep",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "brick9694",
+  "top": "8-wood / 10-wheat / 4-wheat",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "card3054",
+  "top": "6-sheep / 9-ore / 10-brick",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "card9921",
+  "top": "6-wheat / 9-ore / 5-wood",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "catan1713",
+  "top": "8-wood / 5-wood / 10-ore",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "catan6441",
+  "top": "6-ore / 5-ore / 9-wheat",
+  "lean": -0.35679390486227897,
+  "nRecs": 3
+ },
+ {
+  "gid": "catan9592",
+  "top": "8-wood / 5-wheat / 10-wood",
+  "lean": -0.35679390486227897,
+  "nRecs": 3
+ },
+ {
+  "gid": "city2216",
+  "top": "5-wheat / 9-wood / 10-wood",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay1643",
+  "top": "8-wheat / 5-sheep / 10-sheep",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay5899",
+  "top": "8-ore / 5-wood / 10-wood",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay787",
+  "top": "8-wood / 10-ore / 3-ore",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay8136",
+  "top": "6-sheep / 9-wheat / 5-brick",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay8260",
+  "top": "8-wheat / 5-wood / 10-wheat",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "clay9676",
+  "top": "8-wheat / 4-wheat / 10-wood",
+  "lean": 0.6312507547563362,
+  "nRecs": 3
+ },
+ {
+  "gid": "coin1836",
+  "top": "8-brick / 5-wheat / 10-brick",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "cost9487",
+  "top": "8-sheep / 5-wood / 10-wheat",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "cost9679",
+  "top": "6-wheat / 9-wood / 10-brick",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "cost9885",
+  "top": "6-sheep / 9-wood / 10-ore",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "crop1818",
+  "top": "6-wood / 9-ore / 5-ore",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "crop1916",
+  "top": "9-wheat / 5-brick / 10-ore",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "deal5898",
+  "top": "8-wheat / 5-wood / 10-brick",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "deal7444",
+  "top": "6-wheat / 5-sheep / 9-wood",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "deal7549",
+  "top": "8-ore / 5-wheat / 10-ore",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "deck129",
+  "top": "8-brick / 5-ore / 10-sheep",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "deck2172",
+  "top": "9-wood / 5-brick / 10-wheat",
+  "lean": -1,
+  "nRecs": 3
+ },
+ {
+  "gid": "deck4938",
+  "top": "8-wheat / 5-wood / 10-ore",
+  "lean": -0.6038050697669316,
+  "nRecs": 3
+ },
+ {
+  "gid": "deck4945",
+  "top": "6-wheat / 5-sheep / 11-wood",
+  "lean": 0.6312507547563362,
+  "nRecs": 3
+ },
+ {
+  "gid": "deck5530",
+  "top": "8-wheat / 5-ore / 10-ore",
+  "lean": 0.6312507547563362,
+  "nRecs": 3
+ },
+ {
+  "gid": "dice9228",
+  "top": "8-sheep / 5-sheep / 10-wheat",
+  "lean": 1,
+  "nRecs": 3
+ },
+ {
+  "gid": "dice9451",
+  "top": "8-wood / 5-ore / 10-wheat",
+  "lean": -0.6038050697669316,
+  "nRecs": 3
+ },
+ {
+  "gid": "edge6128",
+  "top": "8-wheat / 5-ore / 10-brick",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "farm2140",
+  "top": "6-brick / 9-ore / 5-sheep",
+  "lean": -1,
+  "nRecs": 3
+ },
+ {
+  "gid": "farm7484",
+  "top": "6-wheat / 9-wood / 5-sheep",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "fort6728",
+  "top": "6-wood / 9-ore / 10-wood",
+  "lean": -0.6038050697669316,
+  "nRecs": 3
+ },
+ {
+  "gid": "fort8094",
+  "top": "8-wood / 5-ore / 10-wheat",
+  "lean": -1,
+  "nRecs": 3
+ },
+ {
+  "gid": "game3757",
+  "top": "8-wood / 5-sheep / 10-wheat",
+  "lean": -1,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold2286",
+  "top": "6-brick / 9-ore / 10-sheep",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold2608",
+  "top": "8-wood / 10-ore / 4-ore",
+  "lean": 0.38423958985168355,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold4421",
+  "top": "8-wheat / 5-brick / 4-wheat",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold594",
+  "top": "6-wheat / 9-ore / 5-sheep",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold8013",
+  "top": "8-sheep / 5-sheep / 4-wood",
+  "lean": 0.1372284249470294,
+  "nRecs": 3
+ },
+ {
+  "gid": "gold8151",
+  "top": "6-wheat / 5-wood / 11-sheep",
+  "lean": -0.10978273995762479,
+  "nRecs": 3
+ },
+ {
+  "gid": "green3794",
+  "top": "8-brick / 5-wheat / 10-ore",
+  "lean": -0.35679390486227897,
+  "nRecs": 3
+ },
+ {
+  "gid": "green4298",
+  "top": "6-brick / 5-wheat / 9-ore",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ },
+ {
+  "gid": "green5520",
+  "top": "8-wheat / 4-wheat / 3-wheat",
+  "lean": -0.8508162346715857,
+  "nRecs": 3
+ }
+]
