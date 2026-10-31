@@ -237,6 +237,22 @@
   .coach-act b { display: block; color: var(--text); font-size: 12px; margin-bottom: 2px; }
   .coach-act span { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
 
+  /* ── Turn Coach shell + turn-state pill ──
+     The coach is green and prominent on your turn, muted on the opponent's. It stays on screen
+     either way: hiding it for half the game is how you forget it exists. */
+  #turnCoach { border-color: var(--green); }
+  #turnCoach .section-header { color: var(--green); }
+  #turnCoach.coach-waiting { border-color: var(--border); }
+  #turnCoach.coach-waiting .section-header { color: var(--text-muted); }
+  #turnCoach.coach-waiting .section-body { opacity: 0.68; }
+  .tc-pill {
+    font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 3px 7px; border-radius: 4px; line-height: 1;
+  }
+  .tc-now  { background: rgba(97,215,142,0.16); color: var(--green); }
+  /* --surface2 would be invisible here: it's the header's own background. */
+  .tc-wait { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); padding: 2px 6px; }
+
   /* ── Win-Path panel (inside Turn Coach) ──
      Four labelled rows, no scores. The opponent's position drives the advice but is never printed —
      Colonist already shows both scores, so repeating them is noise. */
@@ -385,9 +401,9 @@
       </div>
     </div>
 
-    <!-- Turn Coach — visible on your turn during the main game -->
-    <div class="section" id="turnCoach" style="display:none;border-color:var(--green)">
-      <div class="section-header" style="color:var(--green)">🎯 Turn Coach</div>
+    <!-- Turn Coach — stays up for the whole main game; dims on the opponent's turn -->
+    <div class="section" id="turnCoach" style="display:none">
+      <div class="section-header">🎯 Turn Coach<span id="turnCoachStatus" class="tc-pill tc-now">Your turn</span></div>
       <div class="section-body" id="turnCoachBody"></div>
     </div>
 

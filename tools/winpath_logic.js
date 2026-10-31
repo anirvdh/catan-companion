@@ -59,7 +59,13 @@ function setup(opts) {
       corners[String(i)] = { id:String(i), res:[{res:'ore',dice:6},{res:'wheat',dice:9}], port:null };
       neighbors[String(i)] = [];
     }
-    state.board = { geo: { corners: corners, neighbors: neighbors, weights:{wood:1,brick:1,sheep:1,wheat:1,ore:1},
+    // cornerIds + hexByCoord are what computeRobberAdvice walks; without them the robber block
+    // throws rather than returning advice.
+    var hexByCoord = { 'h1': { res:'ore', dice:6 }, 'h2': { res:'wheat', dice:9 } };
+    Object.keys(corners).forEach(function(k){ corners[k].tri = ['h1','h2']; });
+    state.board = { geo: { corners: corners, cornerIds: Object.keys(corners), neighbors: neighbors,
+                           hexByCoord: hexByCoord,
+                           weights:{wood:1,brick:1,sheep:1,wheat:1,ore:1},
                            resPips:{wood:4,brick:4,sheep:4,wheat:4,ore:4}, ports:{} } };
     state.cornerOwner = o.cornerOwner || { '1': { owner:'1', buildingType:1 } };
     state.vp = o.vp || {};
@@ -202,6 +208,35 @@ check('equal knights does not take Largest Army', r.F.laNeed === 1, `laNeed=${r.
 r = setup({ vp: { '1': vp(3, 2), '2': vp(3, 2, 0, 0, 1) }, roadLen: { '1': 6, '2': 6 },
             awards: { la: {}, lr: { '2': { hasLongestRoad: true } } } });
 check('equal road length does not take Longest Road', r.F.lrNeed === 1, `lrNeed=${r.F.lrNeed}`);
+
+console.log('\n── turn visibility (the coach must not vanish on the opponent\'s turn) ──');
+// Drive computeTurnCoach directly, flipping only whose turn it is.
+function coachAt(turnColor, opts) {
+  setup(opts || { vp: { '1': vp(3, 2), '2': vp(3, 2) }, hand: { wood:1, brick:1, sheep:1, wheat:2, ore:3 } });
+  sandbox.__turn = turnColor;
+  return run(`(function(){ state.currentTurnColor = __turn; var a = computeTurnCoach();
+    return { active: a.active, myTurn: a.myTurn, hasPlan: !!a.plan, robber: !!a.robber,
+             objective: a.plan && a.plan.objective, doNext: a.plan && a.plan.primary && a.plan.primary.do }; })()`);
+}
+const mine = coachAt('1');
+const theirs = coachAt('2');
+check('active on MY turn', mine.active && mine.myTurn === true);
+check('still ACTIVE on the opponent\'s turn', theirs.active === true, `active=${theirs.active}`);
+check('  …flagged as not my turn', theirs.myTurn === false, `myTurn=${theirs.myTurn}`);
+check('  …and still carries a full plan', theirs.hasPlan && !!theirs.objective && !!theirs.doNext,
+  JSON.stringify(theirs).slice(0, 120));
+check('plan is identical on both turns (recomputed, not frozen)',
+  mine.objective === theirs.objective && mine.doNext === theirs.doNext,
+  `mine="${mine.doNext}" theirs="${theirs.doNext}"`);
+
+// A robber move is only ever owed on your own turn — it must never show while waiting.
+sandbox.__t = 1;
+const robberMine = run(`(function(){ state.currentTurnColor = state.myColor; state.robberPending = true;
+  var a = computeTurnCoach(); return !!a.robber; })()`);
+const robberTheirs = run(`(function(){ state.currentTurnColor = state.oppColor; state.robberPending = true;
+  var a = computeTurnCoach(); return !!a.robber; })()`);
+check('robber advice shows on my turn when owed', robberMine === true);
+check('robber advice suppressed on the opponent\'s turn', robberTheirs === false);
 
 console.log('\n── shape of the output ──');
 r = setup({ vp: { '1': vp(3, 2), '2': vp(3, 2) }, hand: { wood:1, brick:1, sheep:1, wheat:1, ore:0 } });

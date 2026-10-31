@@ -148,6 +148,11 @@ const SCENE = `<script>
   }
 
   if (scene === 'coach')    only([byId('turnCoach') || document.getElementById('turnCoach')]);
+  if (scene === 'coach-wait') {
+    state.currentTurnColor = '2';                 // opponent to act
+    if (typeof renderTurnCoach === 'function') renderTurnCoach();
+    only([document.getElementById('turnCoach')]);
+  }
   if (scene === 'opponent') only([byId('opponentResources')]);
   if (scene === 'odds')   { only([diceSec]); setDiceView('odds'); }
   if (scene === 'dist')   { only([diceSec]); setDiceView('dist'); }

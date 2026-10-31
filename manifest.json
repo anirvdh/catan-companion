@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Catan Companion",
-  "version": "1.62",
+  "version": "1.63",
   "description": "Real-time Catan strategy assistant for colonist.io",
   "permissions": [
     "activeTab",

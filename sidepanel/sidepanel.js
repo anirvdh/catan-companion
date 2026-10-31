@@ -1042,14 +1042,21 @@ function computeTurnCoach() {
   if (!state.gameActive || !state.myColor) return { active: false };
   const setupDone = state.rolls.length > 0 || Object.keys(state.cornerOwner).length >= 4;
   if (!setupDone) return { active: false };                        // setup advisor owns this phase
-  if (state.currentTurnColor && state.currentTurnColor !== state.myColor) return { active: false };
 
-  const h = player(state.myColor).hand;
-  const total = handSum(h);
-  const deckLeft = state.dev.bankRemaining == null ? 99 : state.dev.bankRemaining;
+  // THE COACH STAYS VISIBLE ON THE OPPONENT'S TURN. It used to hide itself, which meant the panel
+  // vanished for roughly half the game — long enough to forget it was there at all.
+  // The plan is RECOMPUTED live rather than frozen, because the position genuinely moves while you
+  // wait: they can rob or monopolise your hand, build, or take an award off you. A frozen snapshot
+  // would quietly go stale. What you read is always current; it just isn't actionable yet.
+  const myTurn = !state.currentTurnColor || state.currentTurnColor === state.myColor;
+
   const F = winPathFacts();
   const plan = winPathPlan(F);
-  return { active: true, plan, facts: F, robber: state.robberPending ? computeRobberAdvice() : null };
+  return {
+    active: true, myTurn, plan, facts: F,
+    // A robber move is only ever owed on your own turn.
+    robber: (myTurn && state.robberPending) ? computeRobberAdvice() : null,
+  };
 }
 
 // Build the ranked candidate actions, then pick by TIER. Each candidate carries the VP it certainly
@@ -2121,13 +2128,22 @@ function renderAll() {
   renderFooter();
 }
 
-// Turn Coach — visible on your turn during the main game (hidden in setup / opp's turn).
+// Turn Coach — visible for the whole main game. Hidden only during setup, where the placement
+// advisor owns the panel. On the opponent's turn it stays up, dimmed, with the plan still live.
 function renderTurnCoach() {
   const sec = document.getElementById('turnCoach');
   if (!sec) return;
   const a = computeTurnCoach();
   if (!a.active) { sec.style.display = 'none'; return; }
   sec.style.display = 'block';
+  sec.classList.toggle('coach-waiting', !a.myTurn);
+
+  const status = document.getElementById('turnCoachStatus');
+  if (status) {
+    status.className = 'tc-pill ' + (a.myTurn ? 'tc-now' : 'tc-wait');
+    status.textContent = a.myTurn ? 'Your turn' : 'Opponent’s turn';
+  }
+
   const body = document.getElementById('turnCoachBody');
   if (!body) return;
 

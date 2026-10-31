@@ -22,10 +22,10 @@ The second part is why this repo contains as much analysis as code. Several conf
 
 | | |
 |---|---|
-| Extension version | **1.62** |
+| Extension version | **1.63** |
 | Placement scorer | `v1.50`, config hash `ee784b36` — **frozen** for the current collection run |
-| Games recorded | 171, all passing integrity checks |
-| Decided games (someone reached 15) | 90 — *not enough to tune weights on; see [Why the scorer is frozen](#why-the-scorer-is-frozen)* |
+| Games recorded | 255, all passing integrity checks |
+| Decided games (someone reached 15) | **136** — approaching the ~150 threshold for revisiting weights; see [Why the scorer is frozen](#why-the-scorer-is-frozen) |
 
 > The empirical tables below come from the **165-game audit snapshot** (86 decided), which is the
 > last point where every figure was independently re-derived and cross-checked. Collection has
@@ -188,6 +188,14 @@ Takes over after setup. Earlier versions ran a fixed ladder — city > settlemen
 
 In that position the player holds two unplayed knights and is one short of Largest Army, so the coach surfaces it as the alternative and prices it: **+2 VP, and it costs nothing but the card.** The city is still the primary because it's the larger immediate gain — but the knight is the move most players forget they already own.
 
+**It stays on screen for the whole game.** It used to hide itself on the opponent's turn, which meant it was gone for roughly half of every game — long enough to forget it existed at all. Now it dims and flips a badge instead:
+
+<p align="center">
+  <img src="docs/img/coach-wait.png" alt="Turn Coach dimmed while waiting on the opponent" width="380">
+</p>
+
+The plan is **recomputed live rather than frozen**, because the position genuinely moves while you wait — the opponent can rob or monopolise your hand, build, or take an award off you. A snapshot from your last turn would quietly go stale. Robber advice is the one thing suppressed while waiting, since a robber move is only ever owed on your own turn.
+
 Candidates are evaluated by the VP they *certainly* add now, so "does this win?" is a comparison rather than a special case. Tiers:
 
 | Tier | Fires when |
@@ -271,7 +279,7 @@ Average winner: **9.9 VP from buildings, 5.1 from cards and awards.**
 
 ### Why the scorer is frozen
 
-90 decided games is not enough to tune weights on, and the honest tests say so:
+136 decided games is still short of what weight tuning needs, and the honest tests say so:
 
 - Weights derived from the data performed **worse** out-of-sample than the hand-set priors (64% vs 68%).
 - Opening regret is **not lower in wins** — winners show *higher* mean regret in 3 of 4 seat/pick cells. That's a research lead, not a tuning signal.
@@ -280,7 +288,7 @@ Average winner: **9.9 VP from buildings, 5.1 from cards and awards.**
 
 So the target is **intermediate metrics** — first-city timing, blocked income, dev-card pace — which converge in tens of games instead of thousands. First-city timing already looks real: the early-city half of decided games wins **77.8%** vs **46.3%**, and the direction holds inside every MMR stratum, including when the recorded player was the underdog.
 
-**~150 decided games before revisiting weights. Currently 90.**
+**~150 decided games before revisiting weights. Currently 136** — close enough that this is worth re-running soon.
 
 ---
 

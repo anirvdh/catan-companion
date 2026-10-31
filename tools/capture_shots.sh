@@ -26,6 +26,7 @@ shoot() {           # shoot <name> <scene> <width> <height>
 echo "capturing:"
 shoot panel      full      400 981
 shoot coach      coach     400 311
+shoot coach-wait coach-wait 400 311
 shoot setup      setup     400 600
 shoot dice-odds  odds      400 239
 shoot dice-dist  dist      400 196
