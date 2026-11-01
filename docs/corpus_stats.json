@@ -1,0 +1,248 @@
+{
+ "corpus": {
+  "records": 266,
+  "eligible": 265,
+  "decided": 146,
+  "conceded": 119,
+  "excluded": [
+   {
+    "gameId": "rule4690",
+    "reason": "missing_end_game"
+   }
+  ],
+  "scorer": [
+   "v1.50",
+   "ee784b36"
+  ]
+ },
+ "outcomes": {
+  "decided_win_rate": [
+   84,
+   146
+  ],
+  "mmr_edge_mean": 30.5,
+  "seat": {
+   "P1": {
+    "games": 126,
+    "decided": 75,
+    "wins": 42
+   },
+   "P2": {
+    "games": 139,
+    "decided": 71,
+    "wins": 42
+   }
+  },
+  "mmr_strata": {
+   "underdog (<0)": {
+    "n": 54,
+    "wins": 34
+   },
+   "even (0..+40)": {
+    "n": 21,
+    "wins": 13
+   },
+   "favoured (>=+40)": {
+    "n": 68,
+    "wins": 35
+   }
+  }
+ },
+ "winner_profile": {
+  "vp_card": [
+   138,
+   146
+  ],
+  "la": [
+   101,
+   146
+  ],
+  "lr": [
+   117,
+   146
+  ],
+  "any_award": [
+   145,
+   146
+  ],
+  "both_awards": [
+   73,
+   146
+  ],
+  "cities_ge2": [
+   146,
+   146
+  ],
+  "cities_3_4": [
+   122,
+   146
+  ]
+ },
+ "engine_gate": {
+  "STRONG": {
+   "games": 206,
+   "built_city": [
+    189,
+    206
+   ],
+   "median_first_city_roll": 21,
+   "median_cities": 3.0,
+   "p1_share": 51
+  },
+  "WEAK": {
+   "games": 26,
+   "built_city": [
+    24,
+    26
+   ],
+   "median_first_city_roll": 35.5,
+   "median_cities": 2.0,
+   "p1_share": 35
+  },
+  "FRAGILE": {
+   "games": 4,
+   "built_city": [
+    4,
+    4
+   ],
+   "median_first_city_roll": 38.5,
+   "median_cities": 3.0,
+   "p1_share": 75
+  },
+  "MISSING": {
+   "games": 29,
+   "built_city": [
+    21,
+    29
+   ],
+   "median_first_city_roll": 34,
+   "median_cities": 2,
+   "p1_share": 28
+  }
+ },
+ "first_city": {
+  "paired": {
+   "i_first": [
+    46,
+    75
+   ],
+   "opp_first": [
+    35,
+    67
+   ],
+   "sign_p": 0.2752
+  },
+  "median_winner": 26.0,
+  "median_loser": 29.5,
+  "strata": {
+   "underdog (<0)": {
+    "early": [
+     16,
+     21
+    ],
+    "late": [
+     17,
+     31
+    ]
+   },
+   "even (0..+40)": {
+    "early": [
+     7,
+     12
+    ],
+    "late": [
+     6,
+     9
+    ]
+   },
+   "favoured (>=+40)": {
+    "early": [
+     24,
+     37
+    ],
+    "late": [
+     10,
+     30
+    ]
+   }
+  }
+ },
+ "awards": {
+  "Largest Army": {
+   "held": [
+    61,
+    83
+   ],
+   "not_held": [
+    23,
+    63
+   ]
+  },
+  "Longest Road": {
+   "held": [
+    65,
+    75
+   ],
+   "not_held": [
+    19,
+    71
+   ]
+  }
+ },
+ "regret": {
+  "decided wins": {
+   "n": 84,
+   "mean": 1.89,
+   "median": 1.49
+  },
+  "decided losses": {
+   "n": 62,
+   "mean": 1.3,
+   "median": 0.68
+  },
+  "conceded": {
+   "n": 119,
+   "mean": 1.61,
+   "median": 1.2
+  }
+ },
+ "robber": {
+  "wins": {
+   "mine": 6.19,
+   "opp": 9.31
+  },
+  "losses": {
+   "mine": 7.87,
+   "opp": 8.53
+  }
+ },
+ "production": {
+  "total": 0.21,
+  "wood": 0.06,
+  "brick": 0.1,
+  "sheep": -0.12,
+  "wheat": -0.01,
+  "ore": 0.09
+ },
+ "concessions": {
+  "ahead": [
+   52,
+   119
+  ],
+  "behind": [
+   48,
+   119
+  ],
+  "tied": [
+   19,
+   119
+  ]
+ },
+ "power": {
+  "decided": 146,
+  "win_rate_ci": [
+   0.4942424660050123,
+   0.6525792443878292
+  ]
+ }
+}
